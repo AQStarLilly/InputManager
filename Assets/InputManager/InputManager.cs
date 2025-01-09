@@ -1,18 +1,37 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour
+public class InputManager : MonoBehaviour, GameInput.IGameplayActions
 {
-    void Update()
-    {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            Debug.Log("Space key was pressed.");
-        }
+    public GameInput gameInput;
+  
+    void Start()
+    {        
+        gameInput = new GameInput();
 
-        if (Gamepad.current.aButton.wasPressedThisFrame)
+        gameInput.Gameplay.Enable();
+
+        gameInput.Gameplay.SetCallbacks(this);
+    }
+
+
+    private Action JumpEvent;
+
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
         {
-            Debug.Log("B button was pressed on gamepad.");
+            Debug.Log("Jump Button was pressed!");
+            JumpEvent?.Invoke();
         }
     }
+
+    private void OnEnable()
+    {
+
+    }
+
+    
 }
