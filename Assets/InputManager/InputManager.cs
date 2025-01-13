@@ -16,7 +16,7 @@ public class InputManager : MonoBehaviour, GameInput.IGameplayActions
     }
 
 
-    private Action JumpEvent;
+
 
 
     public void OnJump(InputAction.CallbackContext context)
@@ -24,14 +24,17 @@ public class InputManager : MonoBehaviour, GameInput.IGameplayActions
         if (context.performed)
         {
             Debug.Log("Jump Button was pressed!");
-            JumpEvent?.Invoke();
+            
+        }
+        //started
+        if (context.started)
+        {
+            Debug.Log("Jump has Started.");
+        }
+        //cancelled
+        if (context.canceled)
+        {
+            Debug.Log("Jump has been Cancelled.");
         }
     }
-
-    private void OnEnable()
-    {
-
-    }
-
-    
 }
