@@ -1,40 +1,35 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour, GameInput.IGameplayActions
+public class InputManager : MonoBehaviour
 {
-    public GameInput gameInput;
-  
-    void Start()
-    {        
-        gameInput = new GameInput();
+    private GameInput _inputActions;
 
-        gameInput.Gameplay.Enable();
-
-        gameInput.Gameplay.SetCallbacks(this);
+    private void Awake()
+    {
+        _inputActions = new GameInput();
     }
 
-
-
-
-
-    public void OnJump(InputAction.CallbackContext context)
+    private void OnEnable()
     {
-        if (context.performed)
-        {
-            Debug.Log("Jump Button was pressed!");
-            
-        }
-        //started
-        if (context.started)
-        {
-            Debug.Log("Jump has Started.");
-        }
-        //cancelled
-        if (context.canceled)
-        {
-            Debug.Log("Jump has been Cancelled.");
-        }
+        _inputActions.Enable();
+
+        _inputActions.Gameplay.Move.performed += ctx => Actions.OnMove?.Invoke(ctx.ReadValue<Vector2>());
+        _inputActions.Gameplay.Move.canceled += ctx => Actions.OnMove?.Invoke(Vector2.zero);
+
+        _inputActions.Gameplay.Jump.performed += _ => Actions.OnJump?.Invoke();
+        _inputActions.Gameplay.Interact.performed += _ => Actions.OnInteract?.Invoke();
+    }
+
+    private void OnDisable()
+    {
+        _inputActions.Disable();
+
+        // Unsubscribe input events
+        _inputActions.Gameplay.Move.performed -= ctx => Actions.OnMove?.Invoke(ctx.ReadValue<Vector2>());
+        _inputActions.Gameplay.Move.canceled -= ctx => Actions.OnMove?.Invoke(Vector2.zero);
+
+        _inputActions.Gameplay.Jump.performed -= _ => Actions.OnJump?.Invoke();
+        _inputActions.Gameplay.Interact.performed -= _ => Actions.OnInteract?.Invoke();
     }
 }
